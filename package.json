@@ -1,0 +1,49 @@
+{
+  "name": "freeshipbar",
+  "version": "0.1.0",
+  "description": "Free shipping notification bar embed script for e-commerce sites",
+  "keywords": [
+    "free-shipping",
+    "shipping-bar",
+    "e-commerce",
+    "embed-script",
+    "nextjs",
+    "gumroad"
+  ],
+  "author": "",
+  "license": "MIT",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/1elinnesivar/FreeShipBar.git"
+  },
+  "bugs": {
+    "url": "https://github.com/1elinnesivar/FreeShipBar/issues"
+  },
+  "homepage": "https://github.com/1elinnesivar/FreeShipBar#readme",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "next": "^14.0.0",
+    "zod": "^3.22.4",
+    "axios": "^1.6.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "@types/node": "^20.10.5",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "^14.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+

@@ -1,0 +1,324 @@
+(function() {
+  'use strict';
+  if (window.FreeshipbarLoaded) return;
+  window.FreeshipbarLoaded = true;
+
+  var currentConfig = null;
+  var currentLicense = null;
+  var currentBar = null;
+
+  function getConfig() {
+    var s = document.currentScript || document.querySelector('script[src*="/embed"]');
+    if (!s) return {};
+    var d = s.dataset;
+    var src = s.src || '';
+    var baseUrl = src.substring(0, src.lastIndexOf('/'));
+    
+    var total = Number(d.total);
+    if (isNaN(total)) total = 0;
+    
+    var threshold = Number(d.threshold);
+    if (isNaN(threshold)) threshold = 0;
+    
+    return {
+      total: total,
+      threshold: threshold,
+      currency: d.currency || 'TRY',
+      locale: d.locale === 'en' ? 'en' : 'tr',
+      position: d.position === 'bottom' ? 'bottom' : 'top',
+      sticky: d.sticky !== 'false',
+      theme: d.theme || 'minimal',
+      mode: d.mode || 'bar',
+      colors: (function() {
+        try {
+          return d.colors ? JSON.parse(d.colors) : null;
+        } catch (e) {
+          return null;
+        }
+      })(),
+      license: d.license || null,
+      apiUrl: baseUrl + '/api/verify-license'
+    };
+  }
+
+  function verifyLicense(license, apiUrl) {
+    return new Promise(function(resolve) {
+      var controller = new AbortController();
+      var timeout = setTimeout(function() {
+        controller.abort();
+        resolve({ valid: false, plan: 'free' });
+      }, 2000);
+      
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ license: license }),
+        signal: controller.signal
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        clearTimeout(timeout);
+        resolve(data);
+      })
+      .catch(function(e) {
+        clearTimeout(timeout);
+        resolve({ valid: false, plan: 'free' });
+      });
+    });
+  }
+
+  function formatCurrency(amount, currency, locale) {
+    var formatter = new Intl.NumberFormat(
+      locale === 'en' ? 'en-US' : 'tr-TR',
+      { style: 'currency', currency: currency, minimumFractionDigits: 0 }
+    );
+    return formatter.format(amount);
+  }
+
+  function getMessages(locale) {
+    if (locale === 'en') {
+      return {
+        remaining: 'Only {amount} left for free shipping.',
+        congrats: 'Congrats! You unlocked free shipping.'
+      };
+    }
+    return {
+      remaining: 'Ücretsiz kargo için {amount} kaldı.',
+      congrats: 'Tebrikler! Ücretsiz kargo kazandınız.'
+    };
+  }
+
+  function applyFreeRestrictions(config, plan) {
+    if (plan === 'free') {
+      config.position = 'top';
+      config.sticky = true;
+      config.theme = 'minimal';
+      config.mode = 'bar';
+      config.colors = null; // Use defaults
+    }
+    return config;
+  }
+
+  function getThemeStyles(theme, colors, plan) {
+    var defaults = { bg: '#111827', fg: '#ffffff', bar: '#10b981' };
+    var clr = plan === 'pro' && colors ? colors : defaults;
+    
+    var styles = {
+      minimal: {
+        bg: clr.bg,
+        fg: clr.fg,
+        bar: clr.bar,
+        borderRadius: '0',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+      },
+      gradient: {
+        bg: 'linear-gradient(135deg, ' + clr.bg + ' 0%, ' + (clr.bg === '#111827' ? '#1e293b' : '#f3f4f6') + ' 100%)',
+        fg: clr.fg,
+        bar: clr.bar,
+        borderRadius: '0',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+      },
+      glass: {
+        bg: 'rgba(17, 24, 39, 0.8)',
+        fg: clr.fg,
+        bar: clr.bar,
+        borderRadius: '12px',
+        boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
+        backdropFilter: 'blur(10px)'
+      },
+      stripe: {
+        bg: clr.bg,
+        fg: clr.fg,
+        bar: clr.bar,
+        borderRadius: '0',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px)'
+      }
+    };
+    return styles[theme] || styles.minimal;
+  }
+
+  function injectStyles() {
+    if (document.getElementById('freeshipbar-styles')) return;
+    var style = document.createElement('style');
+    style.id = 'freeshipbar-styles';
+    style.textContent = '.freeshipbar{position:fixed;left:0;right:0;z-index:10000;padding:12px 20px;font-size:14px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-direction:column;}.freeshipbar-content{display:flex;align-items:center;justify-content:center;width:100%;max-width:1200px;position:relative;flex-wrap:wrap;gap:8px;}.freeshipbar-close{position:absolute;top:8px;right:12px;background:none;border:none;font-size:24px;line-height:1;cursor:pointer;padding:0;width:24px;height:24px;opacity:0.7;transition:opacity 0.2s;}.freeshipbar-close:hover{opacity:1;}.freeshipbar-progress{width:100%;max-width:1200px;height:4px;background:rgba(255,255,255,0.2);border-radius:2px;margin-top:8px;overflow:hidden;}.freeshipbar-progress-bar{height:100%;transition:width 0.3s ease;border-radius:2px;}.freeshipbar-watermark{color:inherit;text-decoration:none;font-size:11px;opacity:0.7;margin-left:12px;}';
+    document.head.appendChild(style);
+  }
+
+  function updateBar(config, license) {
+    if (!currentBar) return;
+    
+    var plan = license && license.valid ? 'pro' : 'free';
+    var finalConfig = applyFreeRestrictions({ ...config }, plan);
+    var themeStyles = getThemeStyles(finalConfig.theme, finalConfig.colors, plan);
+    var messages = getMessages(finalConfig.locale);
+    
+    var total = finalConfig.total;
+    var threshold = finalConfig.threshold;
+    var remaining = Math.max(0, threshold - total);
+    var progress = threshold > 0 ? Math.min(100, Math.floor((total / threshold) * 100)) : 0;
+    
+    var message = total >= threshold 
+      ? messages.congrats 
+      : messages.remaining.replace('{amount}', formatCurrency(remaining, finalConfig.currency, finalConfig.locale));
+    
+    var txtSpan = currentBar.querySelector('.freeshipbar-text');
+    if (txtSpan) txtSpan.textContent = message;
+    
+    var progressBar = currentBar.querySelector('.freeshipbar-progress-bar');
+    if (progressBar && threshold > 0) {
+      progressBar.style.width = progress + '%';
+    }
+    
+    // Update watermark
+    var watermarkEl = currentBar.querySelector('.freeshipbar-watermark');
+    if (plan === 'free' && !watermarkEl) {
+      var wm = document.createElement('a');
+      wm.href = 'https://zekayiozdemir.gumroad.com/l/freeshipbar-pro';
+      wm.target = '_blank';
+      wm.rel = 'noopener';
+      wm.className = 'freeshipbar-watermark';
+      wm.textContent = 'FreeShipBar';
+      var contentDiv = currentBar.querySelector('.freeshipbar-content');
+      if (contentDiv) contentDiv.appendChild(wm);
+    } else if (plan === 'pro' && watermarkEl) {
+      watermarkEl.remove();
+    }
+  }
+
+  function createBar(config, license) {
+    var plan = license && license.valid ? 'pro' : 'free';
+    var finalConfig = applyFreeRestrictions({ ...config }, plan);
+    var themeStyles = getThemeStyles(finalConfig.theme, finalConfig.colors, plan);
+    var messages = getMessages(finalConfig.locale);
+    
+    injectStyles();
+    
+    var total = finalConfig.total;
+    var threshold = finalConfig.threshold;
+    var remaining = Math.max(0, threshold - total);
+    var progress = threshold > 0 ? Math.min(100, Math.floor((total / threshold) * 100)) : 0;
+    
+    var message = total >= threshold 
+      ? messages.congrats 
+      : messages.remaining.replace('{amount}', formatCurrency(remaining, finalConfig.currency, finalConfig.locale));
+    
+    var bar = document.createElement('div');
+    bar.id = 'freeshipbar';
+    bar.className = 'freeshipbar';
+    
+    var bgStyle = themeStyles.bg.startsWith('linear') || themeStyles.bg.startsWith('rgba') || themeStyles.bg.includes('repeating-linear')
+      ? 'background:' + themeStyles.bg + ';'
+      : 'background-color:' + themeStyles.bg + ';';
+    
+    bar.style.cssText = bgStyle + 
+      'color:' + themeStyles.fg + ';' +
+      'top:' + (finalConfig.position === 'top' ? '0' : 'auto') + ';' +
+      'bottom:' + (finalConfig.position === 'bottom' ? '0' : 'auto') + ';' +
+      'border-radius:' + themeStyles.borderRadius + ';' +
+      'box-shadow:' + themeStyles.boxShadow + ';';
+    
+    if (themeStyles.backdropFilter) {
+      bar.style.backdropFilter = themeStyles.backdropFilter;
+    }
+    
+    var contentDiv = document.createElement('div');
+    contentDiv.className = 'freeshipbar-content';
+    
+    var txtSpan = document.createElement('span');
+    txtSpan.className = 'freeshipbar-text';
+    txtSpan.textContent = message;
+    contentDiv.appendChild(txtSpan);
+    
+    if (plan === 'free') {
+      var wm = document.createElement('a');
+      wm.href = 'https://zekayiozdemir.gumroad.com/l/freeshipbar-pro';
+      wm.target = '_blank';
+      wm.rel = 'noopener';
+      wm.className = 'freeshipbar-watermark';
+      wm.textContent = 'FreeShipBar';
+      contentDiv.appendChild(wm);
+    }
+    
+    bar.appendChild(contentDiv);
+    
+    if (threshold > 0 && finalConfig.mode === 'bar') {
+      var progressDiv = document.createElement('div');
+      progressDiv.className = 'freeshipbar-progress';
+      var progressBar = document.createElement('div');
+      progressBar.className = 'freeshipbar-progress-bar';
+      progressBar.style.cssText = 'width:' + progress + '%;background:' + themeStyles.bar + ';';
+      progressDiv.appendChild(progressBar);
+      bar.appendChild(progressDiv);
+    }
+    
+    var closeBtn = document.createElement('button');
+    closeBtn.className = 'freeshipbar-close';
+    closeBtn.innerHTML = '×';
+    closeBtn.setAttribute('aria-label', 'Close');
+    closeBtn.style.color = themeStyles.fg;
+    closeBtn.onclick = function() {
+      bar.remove();
+      currentBar = null;
+      if (finalConfig.sticky) {
+        document.body.style.paddingTop = '';
+        document.body.style.paddingBottom = '';
+      }
+    };
+    bar.appendChild(closeBtn);
+    
+    if (finalConfig.position === 'top') {
+      document.body.insertBefore(bar, document.body.firstChild);
+    } else {
+      document.body.appendChild(bar);
+    }
+    
+    if (finalConfig.sticky) {
+      var barHeight = bar.offsetHeight;
+      if (finalConfig.position === 'top') {
+        document.body.style.paddingTop = barHeight + 'px';
+      } else {
+        document.body.style.paddingBottom = barHeight + 'px';
+      }
+    }
+    
+    currentBar = bar;
+    return bar;
+  }
+
+  function init() {
+    var config = getConfig();
+    
+    if (!config.threshold || config.threshold <= 0 || isNaN(config.threshold)) {
+      console.warn('FreeShipBar: data-threshold is required');
+      return;
+    }
+    
+    currentConfig = config;
+    
+    var licensePromise = config.license 
+      ? verifyLicense(config.license, config.apiUrl)
+      : Promise.resolve({ valid: false, plan: 'free' });
+    
+    licensePromise.then(function(license) {
+      currentLicense = license;
+      createBar(config, license);
+    });
+  }
+
+  window.FREESHIPBAR_UPDATE = function(newTotal) {
+    if (!currentConfig || !currentBar) return;
+    var total = Number(newTotal);
+    if (isNaN(total)) total = 0;
+    currentConfig.total = total;
+    updateBar(currentConfig, currentLicense);
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+
