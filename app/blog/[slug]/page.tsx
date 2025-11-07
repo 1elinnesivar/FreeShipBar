@@ -1,6 +1,8 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import ThemeToggle from '@/components/ThemeToggle'
+import BlogContent from '@/components/BlogContent'
 
 type BlogPost = {
   slug: string
@@ -172,7 +174,7 @@ const blogPosts: Record<string, BlogPost> = {
           the key is to make your free shipping threshold visible and clear to every shopper.
         </p>
         <p>
-          If you want a simple, script-based solution that works with almost any store and a one-time Pro license instead of endless subscriptions, <Link href="/" className="blog-link">try FreeShipBar on your store</Link> and watch your AOV grow.
+          If you want a simple, script-based solution that works with almost any store and a one-time Pro license instead of endless subscriptions, <Link href="/" className="blog-link-inline">try FreeShipBar on your store</Link> and watch your AOV grow.
         </p>
       </>
     ),
@@ -378,7 +380,13 @@ const blogPosts: Record<string, BlogPost> = {
           If you&apos;re looking for a simple way to start, try a lightweight tool like FreeShipBar. You can test it in free mode and upgrade to Pro later if you want full customization and no watermark.
         </p>
         <p>
-          <Link href="/" className="blog-link">Get started with FreeShipBar →</Link>
+          <Link href="/" className="blog-link">
+            Get started with FreeShipBar
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </Link>
         </p>
       </>
     ),
@@ -583,7 +591,13 @@ const blogPosts: Record<string, BlogPost> = {
           If you want to keep your store fast, your setup simple, and your costs under control, start with the lightest solution that gives you a clear free shipping bar and a better average order value.
         </p>
         <p>
-          <Link href="/" className="blog-link">Try FreeShipBar →</Link>
+          <Link href="/" className="blog-link">
+            Try FreeShipBar
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </Link>
         </p>
       </>
     ),
@@ -630,15 +644,40 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
   }
 
   return (
-    <article className="blog-post">
-      <div className="container">
-        <Link href="/blog" className="blog-back">← Back to Blog</Link>
-        <h1>{post.h1}</h1>
-        <div className="blog-content">
-          {post.content}
+    <main className="blog-post">
+      <div className="blog-header">
+        <div className="container">
+          <div className="blog-nav">
+            <div className="blog-nav-links">
+              <Link href="/" className="blog-home-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Home
+              </Link>
+              <Link href="/blog" className="blog-back-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M19 12H5M12 19l-7-7 7-7"></path>
+                </svg>
+                Blog
+              </Link>
+            </div>
+            <ThemeToggle />
+          </div>
         </div>
       </div>
-    </article>
+      <div className="container">
+        <article>
+          <h1>{post.h1}</h1>
+          <div className="blog-content">
+            <BlogContent>
+              {post.content}
+            </BlogContent>
+          </div>
+        </article>
+      </div>
+    </main>
   )
 }
 

@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
+import ThemeToggle from '@/components/ThemeToggle'
 
 const blogPosts = [
   {
@@ -29,7 +30,23 @@ export const metadata: Metadata = {
 
 export default function BlogPage() {
   return (
-    <div className="blog-list-page">
+    <main className="blog-list-page">
+      <div className="blog-header">
+        <div className="container">
+          <div className="blog-nav">
+            <div className="blog-nav-links">
+              <Link href="/" className="blog-home-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Home
+              </Link>
+            </div>
+            <ThemeToggle />
+          </div>
+        </div>
+      </div>
       <div className="container">
         <h1>Blog</h1>
         <p className="blog-list-intro">
@@ -53,7 +70,7 @@ export default function BlogPage() {
           ))}
         </div>
       </div>
-    </div>
+    </main>
   )
 }
 
