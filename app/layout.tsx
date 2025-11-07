@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   description: 'Add a smart free shipping progress bar to your online store with a single script tag. Show customers how close they are to free shipping, increase average order value, and unlock full customization with a one-time Pro license.',
   keywords: ['free shipping bar', 'shipping progress bar', 'ecommerce', 'average order value', 'conversion optimization', 'online store'],
   authors: [{ name: 'FreeShipBar' }],
+  verification: {
+    google: 'HA9wb8Vf-Cw9VlibQnz66KDaJ1B4Lqmtwb26of1P68A',
+  },
   openGraph: {
     title: 'Free Shipping Bar for Online Stores – Boost Average Order Value',
     description: 'Add a smart free shipping progress bar to your online store with a single script tag. Show customers how close they are to free shipping, increase average order value, and unlock full customization with a one-time Pro license.',
