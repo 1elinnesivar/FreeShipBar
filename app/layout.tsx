@@ -58,6 +58,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        {/* Google tag (gtag.js) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-SMK4FPXNKY"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-SMK4FPXNKY');
+          `}
+        </Script>
         <Script
           id="json-ld"
           type="application/ld+json"

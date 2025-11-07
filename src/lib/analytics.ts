@@ -7,16 +7,16 @@ type AnalyticsEvent =
   | 'copy_code_click'
 
 export function trackEvent(eventName: AnalyticsEvent, properties?: Record<string, any>) {
-  // Plausible Analytics
-  if (typeof window !== 'undefined' && (window as any).plausible) {
-    (window as any).plausible(eventName, { props: properties })
-    return
+  if (typeof window === 'undefined') return
+
+  // Google Analytics 4 (gtag) - Primary
+  if ((window as any).gtag) {
+    (window as any).gtag('event', eventName, properties || {})
   }
 
-  // Google Analytics 4
-  if (typeof window !== 'undefined' && (window as any).gtag) {
-    (window as any).gtag('event', eventName, properties)
-    return
+  // Plausible Analytics - Secondary
+  if ((window as any).plausible) {
+    (window as any).plausible(eventName, { props: properties })
   }
 
   // Fallback: console log in development
