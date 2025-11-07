@@ -1,4 +1,10 @@
+'use client'
+
+import { useState } from 'react'
+
 export default function FAQ() {
+  const [openIndex, setOpenIndex] = useState<number | null>(0)
+
   const faqs = [
     {
       question: 'Does it work without Pro?',
@@ -18,15 +24,36 @@ export default function FAQ() {
     },
   ]
 
+  const toggleFAQ = (index: number) => {
+    setOpenIndex(openIndex === index ? null : index)
+  }
+
   return (
     <section className="faq">
       <div className="container">
         <h2>FAQ</h2>
-        <div className="faq-grid">
+        <div className="faq-list">
           {faqs.map((faq, index) => (
-            <div key={index} className="faq-item">
-              <h3>{faq.question}</h3>
-              <p>{faq.answer}</p>
+            <div key={index} className={`faq-item ${openIndex === index ? 'open' : ''}`}>
+              <button
+                className="faq-question"
+                onClick={() => toggleFAQ(index)}
+                aria-expanded={openIndex === index}
+                aria-controls={`faq-answer-${index}`}
+              >
+                <h3>{faq.question}</h3>
+                <span className="faq-icon">{openIndex === index ? '−' : '+'}</span>
+              </button>
+              <div
+                id={`faq-answer-${index}`}
+                className="faq-answer"
+                style={{
+                  maxHeight: openIndex === index ? '500px' : '0',
+                  opacity: openIndex === index ? 1 : 0,
+                }}
+              >
+                <p>{faq.answer}</p>
+              </div>
             </div>
           ))}
         </div>

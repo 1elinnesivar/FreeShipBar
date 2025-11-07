@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { trackEvent } from '@/src/lib/analytics'
 
 export default function CodeBuilder() {
   const [threshold, setThreshold] = useState<number>(750)
@@ -131,22 +132,35 @@ export default function CodeBuilder() {
   }
 
   const copyToClipboard = async () => {
-    const script = generateScript()
-    await navigator.clipboard.writeText(script)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    try {
+      const script = generateScript()
+      await navigator.clipboard.writeText(script)
+      setCopied(true)
+      trackEvent('copy_code_click')
+      setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      console.error('Failed to copy:', err)
+    }
   }
 
   return (
-    <section className="code-builder">
+    <section id="builder" className="code-builder">
       <div className="container">
         <h2>Generate Code</h2>
-        <div className="free-pro-info">
-          <div className="info-item">
-            <strong>Free Mode:</strong> If you don&apos;t enter a license key, it runs in Free mode (watermark + single theme).
+        <div className="free-pro-cards">
+          <div className="mode-card free-mode">
+            <h3>Free Mode</h3>
+            <ul>
+              <li>Watermark + single theme</li>
+              <li>Always sticky at the top</li>
+            </ul>
           </div>
-          <div className="info-item">
-            <strong>Pro Mode:</strong> With a Pro license key, watermark is removed and themes/colors/announce mode unlock.
+          <div className="mode-card pro-mode">
+            <h3>Pro Mode</h3>
+            <ul>
+              <li>No watermark + all themes</li>
+              <li>Colors + positions + announce mode</li>
+            </ul>
           </div>
         </div>
         <div className="builder-grid">
@@ -200,13 +214,13 @@ export default function CodeBuilder() {
                 <option value="glass">Glass</option>
                 <option value="stripe">Stripe</option>
               </select>
-              {!license && <small style={{color: '#6b7280', display: 'block', marginTop: '0.25rem'}}>Pro license required</small>}
+              {!license && <span className="pro-badge">Pro license required</span>}
             </div>
 
             <div style={{opacity: license ? 1 : 0.6}}>
               <div className="form-group">
                 <label>Colors (Pro)</label>
-                {!license && <small style={{color: '#6b7280', display: 'block', marginBottom: '0.5rem'}}>Pro license required</small>}
+                {!license && <span className="pro-badge">Pro license required</span>}
                 <div className="color-inputs">
                   <div className="color-input-group">
                     <label htmlFor="bgColor">Background</label>
@@ -274,7 +288,7 @@ export default function CodeBuilder() {
                 <option value="top">Top</option>
                 <option value="bottom">Bottom</option>
               </select>
-              {!license && <small style={{color: '#6b7280', display: 'block', marginTop: '0.25rem'}}>Free mode: Top only</small>}
+              {!license && <span className="pro-badge">Free mode: Top only</span>}
             </div>
 
             <div className="form-group">
@@ -285,7 +299,7 @@ export default function CodeBuilder() {
                   onChange={(e) => setSticky(e.target.checked)}
                   disabled={!license}
                 />
-                <span>Sticky (Fixed position) {!license && '(Free: Always sticky)'}</span>
+                <span>Sticky (Fixed position) {!license && <span className="pro-badge-inline">(Free: Always sticky)</span>}</span>
               </label>
             </div>
 
@@ -300,7 +314,7 @@ export default function CodeBuilder() {
                 <option value="bar">Bar</option>
                 <option value="announce">Announce</option>
               </select>
-              {!license && <small style={{color: '#6b7280', display: 'block', marginTop: '0.25rem'}}>Free mode: Bar only</small>}
+              {!license && <span className="pro-badge">Free mode: Bar only</span>}
             </div>
 
             <div className="form-group">
@@ -323,15 +337,19 @@ export default function CodeBuilder() {
                 onChange={(e) => setCartTotal(Number(e.target.value))}
                 min="0"
               />
+              <small className="helper-text">This doesn&apos;t affect your real store – it&apos;s just a preview for you.</small>
             </div>
 
             <button onClick={copyToClipboard} className="copy-button">
-              {copied ? '✓ Copied!' : 'Copy Code'}
+              {copied ? '✓ Copied!' : 'Copy embed code'}
             </button>
           </div>
 
           <div className="builder-preview">
             <h3>Live Preview</h3>
+            <p className="preview-description">
+              Try different cart totals to see how the progress bar updates in real time.
+            </p>
             <div className="preview-container" ref={previewContainerRef}>
               <div className="preview-content">
                 <h4>Sample E-commerce Page</h4>
@@ -380,7 +398,7 @@ export default function CodeBuilder() {
                   fontSize: '0.875rem',
                 }}
               >
-                {copied ? '✓ Copied!' : 'Copy Code'}
+                {copied ? '✓ Copied!' : 'Copy embed code'}
               </button>
               <pre className="code-block">
                 <code>{isClient ? generateScript() : 'Loading...'}</code>

@@ -1,23 +1,23 @@
 export default function Features() {
   const features = [
     {
-      title: 'Easy Integration',
-      description: 'Add to your site with a single script tag. No coding required.',
+      title: 'Easy integration',
+      description: 'Add one script tag to your head and FreeShipBar starts working immediately. No theme edits or backend setup required.',
       icon: '⚡',
     },
     {
-      title: 'Customizable',
-      description: 'Adapt colors, position, and language settings to match your brand.',
+      title: 'Customizable (Pro)',
+      description: 'Match your brand with custom colors, positions, themes, and language. All unlock with a Pro license.',
       icon: '🎨',
     },
     {
-      title: 'Responsive',
-      description: 'Perfect appearance on all devices. Mobile-friendly design.',
+      title: 'Responsive by default',
+      description: 'Looks great on desktop, tablet, and mobile without any extra configuration.',
       icon: '📱',
     },
     {
-      title: 'Performant',
-      description: 'Lightweight and fast. Does not affect your site performance.',
+      title: 'Fast & lightweight',
+      description: 'Designed to be tiny and fast. FreeShipBar won\'t slow down your store or hurt Core Web Vitals.',
       icon: '🚀',
     },
   ]

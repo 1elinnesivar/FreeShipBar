@@ -1,14 +1,35 @@
 export default function Themes() {
   const themes = [
-    { name: 'Dark Theme', bg: '#111827', fg: '#ffffff', bar: '#10b981' },
-    { name: 'Light Theme', bg: '#ffffff', fg: '#111827', bar: '#3b82f6' },
-    { name: 'Brand Theme', bg: '#1e40af', fg: '#ffffff', bar: '#fbbf24' },
+    { 
+      name: 'Dark Theme', 
+      bg: '#111827', 
+      fg: '#ffffff', 
+      bar: '#10b981',
+      label: 'Great for dark headers and modern stores',
+    },
+    { 
+      name: 'Light Theme', 
+      bg: '#ffffff', 
+      fg: '#111827', 
+      bar: '#3b82f6',
+      label: 'Clean look that fits most shops',
+    },
+    { 
+      name: 'Brand Theme', 
+      bg: '#1e40af', 
+      fg: '#ffffff', 
+      bar: '#fbbf24',
+      label: 'Use your own brand colors with Pro',
+    },
   ]
 
   return (
     <section className="themes">
       <div className="container">
         <h2>Themes</h2>
+        <p className="themes-intro">
+          Pro unlocks multiple themes you can switch between with a single option in your code.
+        </p>
         <div className="themes-grid">
           {themes.map((theme, index) => (
             <div key={index} className="theme-card">
@@ -45,6 +66,7 @@ export default function Themes() {
                 </div>
               </div>
               <p className="theme-name">{theme.name}</p>
+              <p className="theme-label">{theme.label}</p>
             </div>
           ))}
         </div>
