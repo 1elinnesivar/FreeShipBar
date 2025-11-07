@@ -1351,3 +1351,262 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* Blog Styles */
+.blog-list-page,
+.blog-post {
+  padding: 5rem 2rem;
+  background: #ffffff;
+  transition: background-color 0.3s ease;
+  min-height: 100vh;
+}
+
+.dark .blog-list-page,
+.dark .blog-post {
+  background: #111827;
+}
+
+.blog-list-page h1,
+.blog-post h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #1f2937;
+  transition: color 0.3s ease;
+}
+
+.dark .blog-list-page h1,
+.dark .blog-post h1 {
+  color: #f9fafb;
+}
+
+.blog-list-intro {
+  font-size: 1.25rem;
+  color: #6b7280;
+  margin-bottom: 3rem;
+  transition: color 0.3s ease;
+}
+
+.dark .blog-list-intro {
+  color: #d1d5db;
+}
+
+.blog-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.blog-list-item {
+  padding: 2rem;
+  background: #f9fafb;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.dark .blog-list-item {
+  background: #374151;
+  border-color: #4b5563;
+}
+
+.blog-list-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dark .blog-list-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.blog-list-item a {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.blog-list-item h2 {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  color: #1f2937;
+  transition: color 0.3s ease;
+}
+
+.dark .blog-list-item h2 {
+  color: #f9fafb;
+}
+
+.blog-list-description {
+  color: #6b7280;
+  line-height: 1.7;
+  margin-bottom: 1rem;
+  transition: color 0.3s ease;
+}
+
+.dark .blog-list-description {
+  color: #d1d5db;
+}
+
+.blog-date {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  transition: color 0.3s ease;
+}
+
+.dark .blog-date {
+  color: #6b7280;
+}
+
+.blog-back {
+  display: inline-block;
+  margin-bottom: 2rem;
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.blog-back:hover {
+  color: #5568d3;
+}
+
+.dark .blog-back {
+  color: #818cf8;
+}
+
+.dark .blog-back:hover {
+  color: #a5b4fc;
+}
+
+.blog-content {
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.8;
+  color: #374151;
+  transition: color 0.3s ease;
+}
+
+.dark .blog-content {
+  color: #d1d5db;
+}
+
+.blog-content p {
+  margin-bottom: 1.5rem;
+}
+
+.blog-content h2 {
+  font-size: 2rem;
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+  color: #1f2937;
+  transition: color 0.3s ease;
+}
+
+.dark .blog-content h2 {
+  color: #f9fafb;
+}
+
+.blog-content h3 {
+  font-size: 1.5rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: #1f2937;
+  transition: color 0.3s ease;
+}
+
+.dark .blog-content h3 {
+  color: #f9fafb;
+}
+
+.blog-content ul,
+.blog-content ol {
+  margin-bottom: 1.5rem;
+  padding-left: 2rem;
+}
+
+.blog-content li {
+  margin-bottom: 0.75rem;
+  color: #4b5563;
+  transition: color 0.3s ease;
+}
+
+.dark .blog-content li {
+  color: #d1d5db;
+}
+
+.blog-content strong {
+  color: #1f2937;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.dark .blog-content strong {
+  color: #f9fafb;
+}
+
+.blog-intro {
+  font-size: 1.25rem;
+  color: #4b5563;
+  font-weight: 500;
+  margin-bottom: 2rem;
+  transition: color 0.3s ease;
+}
+
+.dark .blog-intro {
+  color: #d1d5db;
+}
+
+.blog-quote {
+  border-left: 4px solid #667eea;
+  padding-left: 1.5rem;
+  margin: 2rem 0;
+  font-style: italic;
+  color: #6b7280;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.dark .blog-quote {
+  color: #9ca3af;
+  border-color: #818cf8;
+}
+
+.blog-link {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.blog-link:hover {
+  color: #5568d3;
+  text-decoration: underline;
+}
+
+.dark .blog-link {
+  color: #818cf8;
+}
+
+.dark .blog-link:hover {
+  color: #a5b4fc;
+}
+
+@media (max-width: 640px) {
+  .blog-list-page,
+  .blog-post {
+    padding: 3rem 1rem;
+  }
+
+  .blog-list-page h1,
+  .blog-post h1 {
+    font-size: 2rem;
+  }
+
+  .blog-content h2 {
+    font-size: 1.75rem;
+  }
+
+  .blog-content h3 {
+    font-size: 1.25rem;
+  }
+}
