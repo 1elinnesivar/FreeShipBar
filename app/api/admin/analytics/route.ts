@@ -131,7 +131,7 @@ export async function GET(request: NextRequest) {
     const bounceRatePercent = (parseFloat(bounceRate) * 100).toFixed(1) + '%'
 
     // Toplam kullanıcı sayısını hesapla (sources için)
-    const totalSourceUsers = sourcesResponse.rows?.reduce((sum, row) => {
+    const totalSourceUsers = sourcesResponse.rows?.reduce((sum: number, row: any) => {
       return sum + parseInt(row.metricValues?.[0]?.value || '0')
     }, 0) || 1
 
@@ -142,12 +142,12 @@ export async function GET(request: NextRequest) {
       pageViews,
       avgSessionDuration,
       bounceRate: bounceRatePercent,
-      topPages: pagesResponse.rows?.slice(0, 5).map((row) => ({
+      topPages: pagesResponse.rows?.slice(0, 5).map((row: any) => ({
         path: row.dimensionValues?.[0]?.value || '',
         views: parseInt(row.metricValues?.[0]?.value || '0'),
         title: row.dimensionValues?.[1]?.value || 'Untitled',
       })) || [],
-      topSources: sourcesResponse.rows?.slice(0, 5).map((row) => {
+      topSources: sourcesResponse.rows?.slice(0, 5).map((row: any) => {
         const users = parseInt(row.metricValues?.[0]?.value || '0')
         return {
           source: row.dimensionValues?.[0]?.value || 'unknown',
@@ -155,7 +155,7 @@ export async function GET(request: NextRequest) {
           percentage: ((users / totalSourceUsers) * 100).toFixed(1),
         }
       }) || [],
-      topCountries: countriesResponse.rows?.slice(0, 5).map((row) => ({
+      topCountries: countriesResponse.rows?.slice(0, 5).map((row: any) => ({
         country: row.dimensionValues?.[0]?.value || 'Unknown',
         users: parseInt(row.metricValues?.[0]?.value || '0'),
       })) || [],
