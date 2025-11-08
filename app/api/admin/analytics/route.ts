@@ -72,6 +72,8 @@ export async function GET(request: NextRequest) {
       credentials,
     })
     console.log('Google Analytics client created successfully')
+    console.log('Using Property ID:', propertyId)
+    console.log('Date range:', { startDate, endDate })
 
     // Toplam kullanıcı ve oturum verileri
     const responses = await Promise.all([
@@ -130,6 +132,15 @@ export async function GET(request: NextRequest) {
     const sourcesResponse = responses[3] as any
     const countriesResponse = responses[4] as any
 
+    // Debug: API response'larını logla
+    console.log('Users response rows count:', usersResponse.rows?.length || 0)
+    console.log('Users response first row:', JSON.stringify(usersResponse.rows?.[0] || null))
+    console.log('Sessions response rows count:', sessionsResponse.rows?.length || 0)
+    console.log('Sessions response first row:', JSON.stringify(sessionsResponse.rows?.[0] || null))
+    console.log('Pages response rows count:', pagesResponse.rows?.length || 0)
+    console.log('Sources response rows count:', sourcesResponse.rows?.length || 0)
+    console.log('Countries response rows count:', countriesResponse.rows?.length || 0)
+
     // Verileri parse et
     const totalUsers = parseInt(usersResponse.rows?.[0]?.metricValues?.[0]?.value || '0')
     const newUsers = parseInt(usersResponse.rows?.[0]?.metricValues?.[1]?.value || '0')
@@ -137,6 +148,16 @@ export async function GET(request: NextRequest) {
     const pageViews = parseInt(sessionsResponse.rows?.[0]?.metricValues?.[1]?.value || '0')
     const avgDuration = sessionsResponse.rows?.[0]?.metricValues?.[2]?.value || '0'
     const bounceRate = sessionsResponse.rows?.[0]?.metricValues?.[3]?.value || '0'
+
+    // Debug: Parse edilen değerleri logla
+    console.log('Parsed values:', {
+      totalUsers,
+      newUsers,
+      sessions,
+      pageViews,
+      avgDuration,
+      bounceRate,
+    })
 
     // Ortalama oturum süresini formatla
     const avgSeconds = parseFloat(avgDuration)
