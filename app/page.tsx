@@ -7,6 +7,7 @@ import Themes from '@/components/Themes'
 import FAQ from '@/components/FAQ'
 import SocialProof from '@/components/SocialProof'
 import HowItWorks from '@/components/HowItWorks'
+import GifPreview from '@/components/GifPreview'
 
 export default function Home() {
   return (
@@ -18,6 +19,7 @@ export default function Home() {
       <Themes />
       <CodeBuilder />
       <FAQ />
+      <GifPreview />
     </main>
   )
 }

@@ -1300,6 +1300,50 @@ body {
   word-break: break-all;
 }
 
+.gif-preview-section {
+  padding: 5rem 2rem;
+  background: #ffffff;
+  transition: background-color 0.3s ease;
+}
+
+.dark .gif-preview-section {
+  background: #111827;
+}
+
+.gif-preview-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.gif-preview-link:hover {
+  transform: scale(1.01);
+}
+
+.gif-preview-link img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.gif-preview-caption {
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  color: #6b7280;
+  text-align: center;
+  font-style: italic;
+}
+
+.dark .gif-preview-caption {
+  color: #9ca3af;
+}
+
 /* Responsive */
 @media (max-width: 968px) {
   .builder-grid {
@@ -1377,8 +1421,13 @@ body {
   .code-builder,
   .social-proof,
   .how-it-works,
-  .faq {
+  .faq,
+  .gif-preview-section {
     padding: 3rem 1rem;
+  }
+
+  .gif-preview-caption {
+    font-size: 0.875rem;
   }
 
   .locale-switcher {
