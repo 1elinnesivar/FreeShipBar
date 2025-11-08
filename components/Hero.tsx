@@ -80,22 +80,28 @@ export default function Hero() {
             </div>
           </div>
           <div className="hero-preview">
-            <a
-              href="/freeshipbar_ph.gif"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="preview-gif-link"
-            >
-              <Image
-                src="/freeshipbar_ph.gif"
-                alt="Free Shipping Bar Preview"
-                width={800}
-                height={600}
-                unoptimized
-                priority
-              />
-              <p className="preview-caption">Watch the free shipping bar update as the cart grows.</p>
-            </a>
+            <div className="preview-mockup">
+              <div className="mockup-header">
+                <div className="mockup-nav">
+                  <span className="mockup-dot"></span>
+                  <span className="mockup-dot"></span>
+                  <span className="mockup-dot"></span>
+                </div>
+                <span className="mockup-title">Your Store</span>
+              </div>
+              <div className="mockup-bar">
+                <div className="mockup-bar-content">
+                  <span>Free shipping in $250 – Add $50 more to unlock free shipping</span>
+                  <div className="mockup-progress">
+                    <div className="mockup-progress-fill" style={{ width: '80%' }}></div>
+                  </div>
+                </div>
+              </div>
+              <div className="mockup-content">
+                <div className="mockup-product">Product 1 - $100</div>
+                <div className="mockup-product">Product 2 - $150</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
