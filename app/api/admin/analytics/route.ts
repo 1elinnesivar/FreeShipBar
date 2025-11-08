@@ -17,7 +17,10 @@ export async function GET(request: NextRequest) {
 
   // Debug: Environment variables kontrolü
   console.log('GA4_PROPERTY_ID exists:', !!propertyId)
+  console.log('GA4_PROPERTY_ID value:', propertyId ? `${propertyId.substring(0, 5)}...` : 'undefined')
   console.log('GA4_CREDENTIALS exists:', !!credentialsJson)
+  console.log('GA4_CREDENTIALS length:', credentialsJson ? credentialsJson.length : 0)
+  console.log('All env vars starting with GA4:', Object.keys(process.env).filter(key => key.startsWith('GA4')))
 
   // Eğer Google Analytics yapılandırması yoksa mock data döndür
   if (!propertyId || !credentialsJson) {
