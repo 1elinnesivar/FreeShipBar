@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
     })
 
     // Toplam kullanıcı ve oturum verileri
-    const [usersResponse, sessionsResponse, pagesResponse, sourcesResponse, countriesResponse] = await Promise.all([
+    const responses = await Promise.all([
       // Toplam kullanıcılar
       analyticsDataClient.runReport({
         property: `properties/${propertyId}`,
@@ -106,6 +106,12 @@ export async function GET(request: NextRequest) {
         limit: 5,
       }),
     ])
+
+    const usersResponse = responses[0] as any
+    const sessionsResponse = responses[1] as any
+    const pagesResponse = responses[2] as any
+    const sourcesResponse = responses[3] as any
+    const countriesResponse = responses[4] as any
 
     // Verileri parse et
     const totalUsers = parseInt(usersResponse.rows?.[0]?.metricValues?.[0]?.value || '0')

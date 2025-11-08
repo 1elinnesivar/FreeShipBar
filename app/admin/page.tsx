@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -28,33 +28,7 @@ export default function AdminDashboard() {
   const [warning, setWarning] = useState<string | null>(null)
   const router = useRouter()
 
-  useEffect(() => {
-    checkAuth()
-  }, [])
-
-  useEffect(() => {
-    if (authenticated) {
-      fetchAnalytics()
-    }
-  }, [authenticated, dateRange])
-
-  const checkAuth = async () => {
-    try {
-      const response = await fetch('/api/admin/check-auth')
-      if (response.ok) {
-        const data = await response.json()
-        setAuthenticated(data.authenticated)
-      } else {
-        setAuthenticated(false)
-      }
-    } catch (error) {
-      setAuthenticated(false)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     setLoading(true)
     try {
       const params = new URLSearchParams({
@@ -73,7 +47,33 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false)
     }
+  }, [dateRange])
+
+  const checkAuth = async () => {
+    try {
+      const response = await fetch('/api/admin/check-auth')
+      if (response.ok) {
+        const data = await response.json()
+        setAuthenticated(data.authenticated)
+      } else {
+        setAuthenticated(false)
+      }
+    } catch (error) {
+      setAuthenticated(false)
+    } finally {
+      setLoading(false)
+    }
   }
+
+  useEffect(() => {
+    checkAuth()
+  }, [])
+
+  useEffect(() => {
+    if (authenticated) {
+      fetchAnalytics()
+    }
+  }, [authenticated, fetchAnalytics])
 
   const handleLogout = async () => {
     await fetch('/api/admin/logout', { method: 'POST' })
