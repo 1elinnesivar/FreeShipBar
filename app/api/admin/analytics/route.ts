@@ -15,8 +15,13 @@ export async function GET(request: NextRequest) {
   const startDate = request.nextUrl.searchParams.get('startDate') || '30daysAgo'
   const endDate = request.nextUrl.searchParams.get('endDate') || 'today'
 
+  // Debug: Environment variables kontrolü
+  console.log('GA4_PROPERTY_ID exists:', !!propertyId)
+  console.log('GA4_CREDENTIALS exists:', !!credentialsJson)
+
   // Eğer Google Analytics yapılandırması yoksa mock data döndür
   if (!propertyId || !credentialsJson) {
+    console.log('Missing GA4 configuration, returning mock data')
     const mockData = {
       totalUsers: 1250,
       newUsers: 450,
@@ -51,10 +56,19 @@ export async function GET(request: NextRequest) {
 
   try {
     // Google Analytics Data API ile gerçek veri çekme
-    const credentials = JSON.parse(credentialsJson)
+    console.log('Attempting to connect to Google Analytics API...')
+    let credentials
+    try {
+      credentials = typeof credentialsJson === 'string' ? JSON.parse(credentialsJson) : credentialsJson
+    } catch (parseError) {
+      console.error('Failed to parse GA4_CREDENTIALS:', parseError)
+      throw new Error('Invalid GA4_CREDENTIALS format. Must be valid JSON.')
+    }
+    
     const analyticsDataClient = new BetaAnalyticsDataClient({
       credentials,
     })
+    console.log('Google Analytics client created successfully')
 
     // Toplam kullanıcı ve oturum verileri
     const responses = await Promise.all([
@@ -163,9 +177,12 @@ export async function GET(request: NextRequest) {
       isMock: false,
     }
 
+    console.log('Successfully fetched analytics data')
     return NextResponse.json({ success: true, data })
   } catch (error: any) {
     console.error('Google Analytics API Error:', error)
+    console.error('Error message:', error?.message)
+    console.error('Error stack:', error?.stack)
     
     // Hata durumunda mock data döndür
     const mockData = {

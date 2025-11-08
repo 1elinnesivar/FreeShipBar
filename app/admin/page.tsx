@@ -36,14 +36,20 @@ export default function AdminDashboard() {
         endDate: dateRange.endDate,
       })
       const response = await fetch(`/api/admin/analytics?${params}`)
+      const result = await response.json()
+      
       if (response.ok) {
-        const result = await response.json()
         setAnalytics(result.data)
         setIsMock(result.data?.isMock || false)
         setWarning(result.warning || null)
+      } else {
+        // API'den gelen hata mesajını göster
+        setWarning(result.error || 'Veri çekilirken bir hata oluştu')
+        console.error('Analytics API error:', result.error)
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Analytics fetch error:', error)
+      setWarning('Veri çekilirken bir hata oluştu: ' + (error?.message || 'Bilinmeyen hata'))
     } finally {
       setLoading(false)
     }
