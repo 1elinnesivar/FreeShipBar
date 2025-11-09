@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Script from 'next/script'
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
@@ -24,12 +25,30 @@ export default function FAQ() {
     },
   ]
 
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer,
+      },
+    })),
+  }
+
   const toggleFAQ = (index: number) => {
     setOpenIndex(openIndex === index ? null : index)
   }
 
   return (
     <section className="faq">
+      <Script
+        id="faq-jsonld"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <div className="container">
         <h2>FAQ</h2>
         <div className="faq-list">

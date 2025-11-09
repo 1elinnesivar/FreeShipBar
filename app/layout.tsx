@@ -43,7 +43,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const jsonLd = {
+  const baseUrl = 'https://freeshipbar.vercel.app'
+
+  const softwareApplicationJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
     name: 'FreeShipBar',
@@ -55,7 +57,17 @@ export default function RootLayout({
       priceCurrency: 'USD',
       price: 'TBD',
     },
-    url: 'https://freeshipbar.vercel.app',
+    url: baseUrl,
+  }
+
+  const organizationJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'FreeShipBar',
+    url: baseUrl,
+    logo: `${baseUrl}/FreeShipBar-badge.png`,
+    description: 'Free shipping progress bar tool for online stores. Increase average order value with a lightweight, customizable free shipping bar.',
+    sameAs: [],
   }
 
   return (
@@ -75,9 +87,15 @@ export default function RootLayout({
           `}
         </Script>
         <Script
-          id="json-ld"
+          id="software-application-jsonld"
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareApplicationJsonLd) }}
+          strategy="beforeInteractive"
+        />
+        <Script
+          id="organization-jsonld"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
           strategy="beforeInteractive"
         />
         <ThemeProviderWrapper>{children}</ThemeProviderWrapper>

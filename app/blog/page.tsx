@@ -26,6 +26,29 @@ const blogPosts = [
 export const metadata: Metadata = {
   title: 'Blog - FreeShipBar',
   description: 'Learn about free shipping bars, average order value optimization, and ecommerce conversion tips.',
+  alternates: {
+    canonical: 'https://freeshipbar.vercel.app/blog',
+  },
+  openGraph: {
+    title: 'Blog - FreeShipBar',
+    description: 'Learn about free shipping bars, average order value optimization, and ecommerce conversion tips.',
+    type: 'website',
+    url: 'https://freeshipbar.vercel.app/blog',
+    images: [
+      {
+        url: '/FreeShipBar-badge.png',
+        width: 1200,
+        height: 630,
+        alt: 'FreeShipBar Blog',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Blog - FreeShipBar',
+    description: 'Learn about free shipping bars, average order value optimization, and ecommerce conversion tips.',
+    images: ['/FreeShipBar-badge.png'],
+  },
 }
 
 export default function BlogPage() {

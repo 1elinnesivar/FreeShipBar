@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import Script from 'next/script'
 import ThemeToggle from '@/components/ThemeToggle'
 import BlogContent from '@/components/BlogContent'
 
@@ -9,6 +10,7 @@ type BlogPost = {
   title: string
   description: string
   h1: string
+  date: string
   content: React.ReactNode
 }
 
@@ -18,6 +20,7 @@ const blogPosts: Record<string, BlogPost> = {
     title: '5 Best Free Shipping Bar Solutions for Small Online Stores (2025 Guide)',
     description: 'Discover the best free shipping bar tools for small online stores. Compare simple script-based solutions like FreeShipBar with app-based and theme-based options to increase your average order value.',
     h1: '5 Best Free Shipping Bar Solutions for Small Online Stores (2025 Guide)',
+    date: '2025-01-15',
     content: (
       <>
         <p className="blog-intro">
@@ -184,6 +187,7 @@ const blogPosts: Record<string, BlogPost> = {
     title: 'How a Free Shipping Progress Bar Can Increase Your Average Order Value',
     description: 'Learn how a free shipping progress bar nudges shoppers to add one more item, increases average order value, and improves your ecommerce conversion rate without aggressive discounts.',
     h1: 'How a Free Shipping Progress Bar Can Increase Your Average Order Value',
+    date: '2025-01-10',
     content: (
       <>
         <p className="blog-intro">
@@ -396,6 +400,7 @@ const blogPosts: Record<string, BlogPost> = {
     title: 'How to Show a Free Shipping Threshold on Your Store Without Heavy Apps',
     description: 'Want to show a free shipping threshold without installing heavy apps? Learn how to add a simple free shipping bar or progress message using scripts and lightweight tools like FreeShipBar.',
     h1: 'How to Show a Free Shipping Threshold on Your Store Without Heavy Apps',
+    date: '2025-01-05',
     content: (
       <>
         <p className="blog-intro">
@@ -619,19 +624,36 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     }
   }
 
+  const baseUrl = 'https://freeshipbar.vercel.app'
+  const url = `${baseUrl}/blog/${params.slug}`
+
   return {
     title: post.title,
     description: post.description,
+    alternates: {
+      canonical: url,
+    },
     openGraph: {
       title: post.title,
       description: post.description,
       type: 'article',
-      url: `https://freeshipbar.vercel.app/blog/${params.slug}`,
+      url: url,
+      publishedTime: post.date,
+      authors: ['FreeShipBar'],
+      images: [
+        {
+          url: '/FreeShipBar-badge.png',
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: post.title,
       description: post.description,
+      images: ['/FreeShipBar-badge.png'],
     },
   }
 }
@@ -643,8 +665,74 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
     notFound()
   }
 
+  const baseUrl = 'https://freeshipbar.vercel.app'
+  const url = `${baseUrl}/blog/${params.slug}`
+
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    description: post.description,
+    image: `${baseUrl}/FreeShipBar-badge.png`,
+    datePublished: post.date,
+    dateModified: post.date,
+    author: {
+      '@type': 'Organization',
+      name: 'FreeShipBar',
+      url: baseUrl,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'FreeShipBar',
+      url: baseUrl,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${baseUrl}/FreeShipBar-badge.png`,
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': url,
+    },
+  }
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: baseUrl,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Blog',
+        item: `${baseUrl}/blog`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: post.title,
+        item: url,
+      },
+    ],
+  }
+
   return (
     <main className="blog-post">
+      <Script
+        id="article-jsonld"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      <Script
+        id="breadcrumb-jsonld"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <div className="blog-header">
         <div className="container">
           <div className="blog-nav">
