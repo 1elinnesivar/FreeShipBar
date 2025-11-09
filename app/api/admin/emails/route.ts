@@ -10,46 +10,70 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const emailsDir = join(process.cwd(), 'data', 'emails')
+    const isVercel = process.env.VERCEL === '1'
+    const emailsDir = isVercel 
+      ? join('/tmp', 'emails') 
+      : join(process.cwd(), 'data', 'emails')
     
-    // Tüm dosyaları oku
-    const files = await readdir(emailsDir)
-    
-    // Sadece .json dosyalarını al (metadata)
-    const metadataFiles = files.filter(f => f.endsWith('.json'))
-    
-    // Her metadata dosyasını oku
-    const emails = await Promise.all(
-      metadataFiles.map(async (file) => {
-        try {
-          const filePath = join(emailsDir, file)
-          const content = await readFile(filePath, 'utf-8')
-          return JSON.parse(content)
-        } catch (err) {
-          console.error(`Error reading ${file}:`, err)
-          return null
-        }
+    try {
+      // Tüm dosyaları oku
+      const files = await readdir(emailsDir)
+      
+      // Sadece .json dosyalarını al (metadata)
+      const metadataFiles = files.filter(f => f.endsWith('.json'))
+      
+      // Her metadata dosyasını oku
+      const emails = await Promise.all(
+        metadataFiles.map(async (file) => {
+          try {
+            const filePath = join(emailsDir, file)
+            const content = await readFile(filePath, 'utf-8')
+            return JSON.parse(content)
+          } catch (err) {
+            console.error(`Error reading ${file}:`, err)
+            return null
+          }
+        })
+      )
+
+      // Null değerleri filtrele ve tarihe göre sırala (en yeni önce)
+      const validEmails = emails
+        .filter((email): email is NonNullable<typeof email> => email !== null)
+        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+
+      // Okunmamış email sayısı
+      const unreadCount = validEmails.filter(email => !email.read).length
+
+      return NextResponse.json({
+        success: true,
+        emails: validEmails,
+        total: validEmails.length,
+        unread: unreadCount,
       })
-    )
-
-    // Null değerleri filtrele ve tarihe göre sırala (en yeni önce)
-    const validEmails = emails
-      .filter((email): email is NonNullable<typeof email> => email !== null)
-      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-
-    // Okunmamış email sayısı
-    const unreadCount = validEmails.filter(email => !email.read).length
-
-    return NextResponse.json({
-      success: true,
-      emails: validEmails,
-      total: validEmails.length,
-      unread: unreadCount,
-    })
-  } catch (error) {
+    } catch (dirError: any) {
+      // Klasör yoksa veya okunamazsa boş liste döndür
+      if (dirError.code === 'ENOENT' || isVercel) {
+        return NextResponse.json({
+          success: true,
+          emails: [],
+          total: 0,
+          unread: 0,
+          note: isVercel ? 'Vercel file system is read-only. Please configure a database or storage solution.' : 'No emails found',
+        })
+      }
+      throw dirError
+    }
+  } catch (error: any) {
     console.error('Error reading emails:', error)
     return NextResponse.json(
-      { success: false, error: 'Failed to read emails' },
+      { 
+        success: false, 
+        error: 'Failed to read emails',
+        details: process.env.NODE_ENV === 'development' ? {
+          message: error?.message,
+          code: error?.code,
+        } : undefined,
+      },
       { status: 500 }
     )
   }
