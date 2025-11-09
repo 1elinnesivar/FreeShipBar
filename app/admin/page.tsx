@@ -26,6 +26,7 @@ export default function AdminDashboard() {
   const [dateRange, setDateRange] = useState({ startDate: '30daysAgo', endDate: 'today' })
   const [isMock, setIsMock] = useState(false)
   const [warning, setWarning] = useState<string | null>(null)
+  const [unreadEmails, setUnreadEmails] = useState(0)
   const router = useRouter()
 
   const fetchAnalytics = useCallback(async () => {
@@ -75,9 +76,25 @@ export default function AdminDashboard() {
     checkAuth()
   }, [])
 
+  const fetchUnreadEmails = async () => {
+    try {
+      const response = await fetch('/api/admin/emails')
+      if (response.ok) {
+        const data = await response.json()
+        setUnreadEmails(data.unread || 0)
+      }
+    } catch (error) {
+      console.error('Error fetching unread emails:', error)
+    }
+  }
+
   useEffect(() => {
     if (authenticated) {
       fetchAnalytics()
+      fetchUnreadEmails()
+      // Her 30 saniyede bir okunmamış email sayısını güncelle
+      const interval = setInterval(fetchUnreadEmails, 30000)
+      return () => clearInterval(interval)
     }
   }, [authenticated, fetchAnalytics])
 
@@ -106,6 +123,12 @@ export default function AdminDashboard() {
           <div className="admin-nav">
             <h1>Admin Dashboard</h1>
             <div className="admin-actions">
+              <Link href="/admin/emails" className="admin-link">
+                Email Mesajları
+                {unreadEmails > 0 && (
+                  <span className="unread-badge-inline">{unreadEmails}</span>
+                )}
+              </Link>
               <Link href="/" className="admin-link">Ana Sayfa</Link>
               <button onClick={handleLogout} className="logout-button">
                 Çıkış Yap

@@ -959,6 +959,7 @@ body {
 
 .form-group input[type="number"],
 .form-group input[type="text"],
+.form-group input[type="email"],
 .form-group select {
   width: 100%;
   padding: 0.75rem;
@@ -972,6 +973,7 @@ body {
 
 .dark .form-group input[type="number"],
 .dark .form-group input[type="text"],
+.dark .form-group input[type="email"],
 .dark .form-group select {
   background-color: #4b5563;
   border-color: #6b7280;
@@ -2567,4 +2569,246 @@ table td {
   .analytics-card {
     padding: 1.5rem;
   }
+}
+
+/* Email Pages Styles */
+.unread-badge-inline {
+  display: inline-block;
+  background: #ef4444;
+  color: white;
+  border-radius: 12px;
+  padding: 0.125rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
+  min-width: 20px;
+  text-align: center;
+}
+
+.unread-badge {
+  background: #ef4444;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.emails-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.dark .emails-header {
+  background: #1f2937;
+}
+
+.emails-stats {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.stat-item {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.dark .stat-item {
+  color: #9ca3af;
+}
+
+.stat-item strong {
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.dark .stat-item strong {
+  color: #f9fafb;
+}
+
+.refresh-button {
+  padding: 0.5rem 1rem;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.refresh-button:hover {
+  background: #5568d3;
+}
+
+.no-emails {
+  text-align: center;
+  padding: 3rem;
+  color: #6b7280;
+  font-size: 1.125rem;
+}
+
+.dark .no-emails {
+  color: #9ca3af;
+}
+
+.emails-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.email-item {
+  display: block;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-left: 4px solid transparent;
+}
+
+.dark .email-item {
+  background: #1f2937;
+}
+
+.email-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.email-item.unread {
+  border-left-color: #ef4444;
+  background: #fef2f2;
+}
+
+.dark .email-item.unread {
+  background: #7f1d1d;
+  border-left-color: #fca5a5;
+}
+
+.email-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.email-from {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.unread-dot {
+  width: 8px;
+  height: 8px;
+  background: #ef4444;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.email-from strong {
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.dark .email-from strong {
+  color: #f9fafb;
+}
+
+.email-date {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.dark .email-date {
+  color: #9ca3af;
+}
+
+.email-subject {
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.dark .email-subject {
+  color: #d1d5db;
+}
+
+.email-detail {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+}
+
+.dark .email-detail {
+  background: #1f2937;
+}
+
+.email-detail-header {
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.dark .email-detail-header {
+  border-color: #4b5563;
+}
+
+.email-detail-from,
+.email-detail-date,
+.email-detail-subject {
+  margin-bottom: 0.75rem;
+  color: #374151;
+}
+
+.dark .email-detail-from,
+.dark .email-detail-date,
+.dark .email-detail-subject {
+  color: #d1d5db;
+}
+
+.email-detail-from strong,
+.email-detail-date strong,
+.email-detail-subject strong {
+  color: #1f2937;
+  margin-right: 0.5rem;
+}
+
+.dark .email-detail-from strong,
+.dark .email-detail-date strong,
+.dark .email-detail-subject strong {
+  color: #f9fafb;
+}
+
+.email-detail-content {
+  background: #f9fafb;
+  padding: 1.5rem;
+  border-radius: 6px;
+  white-space: pre-wrap;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #1f2937;
+}
+
+.dark .email-detail-content {
+  background: #111827;
+  color: #f9fafb;
+}
+
+.email-detail-content pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }

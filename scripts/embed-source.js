@@ -288,6 +288,14 @@
   }
 
   function init() {
+    // Clean up any existing bar and padding from previous page loads
+    if (currentBar) {
+      currentBar.remove();
+      currentBar = null;
+    }
+    document.body.style.paddingTop = '';
+    document.body.style.paddingBottom = '';
+    
     var config = getConfig();
     
     if (!config.threshold || config.threshold <= 0 || isNaN(config.threshold)) {

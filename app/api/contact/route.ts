@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { writeFile, mkdir } from 'fs/promises'
+import { join } from 'path'
 
 export async function POST(request: NextRequest) {
   try {
@@ -30,32 +32,48 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Here you can integrate with an email service like:
-    // - Resend
-    // - SendGrid
-    // - Nodemailer
-    // - Or save to a database
+    // Email'i txt dosyası olarak kaydet
+    const timestamp = new Date().toISOString()
+    const dateStr = timestamp.split('T')[0] // YYYY-MM-DD
+    const timeStr = timestamp.split('T')[1].replace(/:/g, '-').split('.')[0] // HH-MM-SS
+    const emailId = `${dateStr}_${timeStr}_${email.replace(/[^a-zA-Z0-9]/g, '_')}`
     
-    // For now, we'll log it (you can replace this with actual email sending)
-    console.log('Contact form submission:', {
-      email,
-      message,
-      timestamp: new Date().toISOString(),
-    })
+    const emailsDir = join(process.cwd(), 'data', 'emails')
+    
+    // Klasör yoksa oluştur
+    try {
+      await mkdir(emailsDir, { recursive: true })
+    } catch (err) {
+      // Klasör zaten varsa hata vermez
+    }
 
-    // TODO: Replace with actual email service integration
-    // Example with Resend:
-    // const resend = new Resend(process.env.RESEND_API_KEY)
-    // await resend.emails.send({
-    //   from: 'contact@freeshipbar.vercel.app',
-    //   to: 'your-email@example.com',
-    //   subject: 'New Contact Form Submission',
-    //   html: `<p>Email: ${email}</p><p>Message: ${message}</p>`,
-    // })
+    // Email içeriğini oluştur
+    const emailContent = `From: ${email}
+Date: ${timestamp}
+Subject: Contact Form Submission - FreeShipBar
+
+${message}
+`
+
+    // Txt dosyası olarak kaydet
+    const filePath = join(emailsDir, `${emailId}.txt`)
+    await writeFile(filePath, emailContent, 'utf-8')
+
+    // Metadata dosyası oluştur (okunma durumu için)
+    const metadata = {
+      id: emailId,
+      email: email,
+      timestamp: timestamp,
+      read: false,
+      subject: 'Contact Form Submission - FreeShipBar',
+    }
+    const metadataPath = join(emailsDir, `${emailId}.json`)
+    await writeFile(metadataPath, JSON.stringify(metadata, null, 2), 'utf-8')
 
     return NextResponse.json({
       success: true,
       message: 'Message sent successfully',
+      id: emailId,
     })
   } catch (error) {
     console.error('Contact form error:', error)
