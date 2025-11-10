@@ -11,7 +11,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/api/', '/embed', '/admin'],
       },
     ],
-    sitemap: `${baseUrl}/sitemap_v1.xml`,
+    sitemap: `${baseUrl}/sitemap.xml`,
   }
 }
 
