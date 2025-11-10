@@ -44,6 +44,10 @@ export async function POST(request: NextRequest) {
     if (resendApiKey) {
       try {
         // Resend API ile email gönder
+        // Not: Domain doğrulaması yapılmadıysa Resend'in test domain'ini kullan
+        // Domain doğrulaması için: https://resend.com/domains
+        const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
+        
         const resendResponse = await fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: {
@@ -51,7 +55,7 @@ export async function POST(request: NextRequest) {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            from: 'FreeShipBar Contact <noreply@freeshipbar.vercel.app>',
+            from: `FreeShipBar Contact <${fromEmail}>`,
             to: recipientEmail,
             replyTo: email,
             subject: `Yeni İletişim Formu Mesajı - ${email}`,
